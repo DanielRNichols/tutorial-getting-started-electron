@@ -1,4 +1,5 @@
-import {app, BrowserWindow} from "electron";
+import {app, BrowserWindow, ipcMain} from "electron";
+
 
 let mainWindow: BrowserWindow | null;
 
@@ -18,4 +19,13 @@ app.on("ready", () => {
   console.log("app is ready");
   console.log(app.getAppPath());
   createWindow();
+});
+
+ipcMain.on("refresh-request", () => {
+  console.log("Received refresh-request");
+  if(mainWindow) {
+    const data: any = {myValue: 2};
+    console.log("Sending data-updated");
+    mainWindow.webContents.send("data-updated", data);
+  }
 });
