@@ -5,6 +5,7 @@ interface IProps {
   onClick: () => void;
 }
 
+// tslint:disable-next-line:variable-name
 export const RefreshButton = (props: IProps) => {
   return (
     <div>

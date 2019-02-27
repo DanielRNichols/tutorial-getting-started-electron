@@ -2,6 +2,7 @@ import * as React from "react";
 import {IpcRenderer} from "electron";
 import { RefreshButton } from "./components/RefreshButton";
 
+// tslint:disable-next-line:no-empty-interface - Just until we add some state
 interface IState {
 }
 
@@ -37,7 +38,7 @@ export class App extends React.Component <IProps, IState> {
   }
 
   private _listenForDataUpdated() {
-    if(this._ipc) {
+    if (this._ipc) {
       this._ipc.on("data-updated", (data: any) => {
         console.log(`New data received!: ${data}`);
       });
@@ -46,7 +47,7 @@ export class App extends React.Component <IProps, IState> {
 
   private _onRefreshButtonClick = () => {
     console.log("Refresh Button clicked");
-    if(this._ipc) {
+    if (this._ipc) {
       this._ipc.send("refresh-request");
     }
   }
@@ -59,4 +60,4 @@ export class App extends React.Component <IProps, IState> {
       </div>
     );
   }
-};
+}

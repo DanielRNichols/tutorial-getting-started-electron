@@ -1,6 +1,5 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 
-
 let mainWindow: BrowserWindow | null;
 
 const createWindow = () => {
@@ -23,7 +22,7 @@ app.on("ready", () => {
 
 ipcMain.on("refresh-request", () => {
   console.log("Received refresh-request");
-  if(mainWindow) {
+  if (mainWindow) {
     const data: any = {myValue: 2};
     console.log("Sending data-updated");
     mainWindow.webContents.send("data-updated", data);
