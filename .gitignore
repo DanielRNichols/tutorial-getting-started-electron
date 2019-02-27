@@ -1,0 +1,8 @@
+node_modules/*
+out/*
+package-lock.json
+notes/*
+.env
+test/.env
+bak/*
+
