@@ -1,6 +1,6 @@
 {
   "restartable": "rs",
-  "ext": "ts",
+  "ext": "ts,tsx",
   "ignore": ["out", "node_modules"],
   "watch": ["src"]
 }
