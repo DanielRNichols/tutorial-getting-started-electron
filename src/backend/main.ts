@@ -1,11 +1,14 @@
 import {app, BrowserWindow, ipcMain} from "electron";
+import {SqliteConnection} from "./services/sqliteConnection";
 
 let mainWindow: BrowserWindow | null;
+let sqliteConn: SqliteConnection;
 
 const createWindow = () => {
 
-  mainWindow = new BrowserWindow({width: 640, height: 480, resizable: true});
+  mainWindow = new BrowserWindow({width: 800, height: 800, resizable: true});
   mainWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow.webContents.openDevTools();
 
   mainWindow.on("closed", () => {
     console.log("Closing window");
@@ -14,17 +17,30 @@ const createWindow = () => {
 
 };
 
+const initDb = () => {
+  sqliteConn = new SqliteConnection("model.db");
+
+};
+
 app.on("ready", () => {
   console.log("app is ready");
   console.log(app.getAppPath());
   createWindow();
+  initDb();
 });
 
-ipcMain.on("refresh-request", () => {
+ipcMain.on("refresh-request", async () => {
   console.log("Received refresh-request");
-  if (mainWindow) {
-    const data: any = {myValue: 2};
-    console.log("Sending data-updated");
-    mainWindow.webContents.send("data-updated", data);
+  if (!mainWindow) {
+    throw new Error("No main window");
   }
+  if (!sqliteConn) {
+    throw new Error("No db connection");
+  }
+  const result = await sqliteConn.Query("Select * from components");
+  console.log(result);
+  if (result instanceof Error) {
+    console.log("Error retrieving data");
+  }
+  mainWindow.webContents.send("data-updated", result);
 });

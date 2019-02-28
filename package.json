@@ -8,6 +8,7 @@
     "build": "npm-run-all lint build:backend build:frontend",
     "build:backend": "tsc -p ./src/backend/tsconfig.json",
     "build:frontend": "webpack",
+    "rebuild": "electron-rebuild -f -w sqlite3",
     "build:start": "npm-run-all build start",
     "dev": "nodemon --exec npm run build:start",
     "start": "env-cmd ./.env electron ./out/main.js",
@@ -23,8 +24,10 @@
     "@types/react": "^16.8.5",
     "@types/react-dom": "^16.8.2",
     "@types/sinon": "^7.0.6",
+    "@types/sqlite3": "^3.1.4",
     "chai": "^4.2.0",
     "electron": "^4.0.5",
+    "electron-rebuild": "^1.8.4",
     "env-cmd": "^8.0.2",
     "html-webpack-plugin": "^3.2.0",
     "mocha": "^6.0.1",
@@ -41,6 +44,7 @@
   },
   "dependencies": {
     "react": "^16.8.3",
-    "react-dom": "^16.8.3"
+    "react-dom": "^16.8.3",
+    "sqlite3": "^4.0.6"
   }
 }
