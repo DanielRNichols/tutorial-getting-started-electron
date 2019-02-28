@@ -39,8 +39,9 @@ export class App extends React.Component <IProps, IState> {
 
   private _listenForDataUpdated() {
     if (this._ipc) {
-      this._ipc.on("data-updated", (data: any) => {
-        console.log(`New data received!: ${data}`);
+      this._ipc.on("data-updated", (sender: any, data: any) => {
+        console.log(`New data received!:`);
+        console.log(data);
       });
     }
   }
