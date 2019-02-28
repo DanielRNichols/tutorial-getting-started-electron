@@ -1,11 +1,17 @@
 import {app, BrowserWindow, ipcMain} from "electron";
+import {SqliteConnection} from "./services/sqliteConnection";
+import {ComponentsDb} from "./repositories/ComponentsDb";
+import {IComponent} from "../common/models/Component";
+import { IQueryOptions } from "./services/queryOptions";
 
 let mainWindow: BrowserWindow | null;
+let compsDb: ComponentsDb | undefined;
 
 const createWindow = () => {
 
-  mainWindow = new BrowserWindow({width: 640, height: 480, resizable: true});
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow = new BrowserWindow({width: 800, height: 800, resizable: true});
+
+  mainWindow.loadURL(`file://${__dirname}/../index.html`);
 
   mainWindow.on("closed", () => {
     console.log("Closing window");
@@ -14,17 +20,38 @@ const createWindow = () => {
 
 };
 
+const initDb = () => {
+  const sqliteConnection: SqliteConnection = new SqliteConnection("model.db");
+  compsDb = new ComponentsDb(sqliteConnection);
+
+};
+
 app.on("ready", () => {
   console.log("app is ready");
   console.log(app.getAppPath());
   createWindow();
+  initDb();
 });
 
-ipcMain.on("refresh-request", () => {
-  console.log("Received refresh-request");
-  if (mainWindow) {
-    const data: any = {myValue: 2};
-    console.log("Sending data-updated");
-    mainWindow.webContents.send("data-updated", data);
+ipcMain.on("refresh-request", async (sender: any, queryOptions: IQueryOptions) => {
+  console.log("Received refresh-request!");
+  console.log(queryOptions);
+  if (!mainWindow) {
+    throw new Error("mainWindow is not defined");
   }
+  if (!compsDb) {
+    throw new Error("compsDb is not defined");
+  }
+  console.log("Read data from compsDb");
+  let data: IComponent[] | Error = new Error ("nothing happening");
+  const result = await compsDb.GetComponents(queryOptions);
+  if (result instanceof Error) {
+    data = result;
+  } else {
+    data = result;
+  }
+
+  console.log("Sending data-updated!!");
+  console.log(data);
+  mainWindow.webContents.send("data-updated", data);
 });
