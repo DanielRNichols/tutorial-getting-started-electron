@@ -1,13 +1,16 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import {SqliteConnection} from "./services/sqliteConnection";
+import {ComponentsDb} from "./repositories/ComponentsDb";
+import {IComponent} from "../common/models/Component";
+import { IQueryOptions } from "./services/queryOptions";
 
 let mainWindow: BrowserWindow | null;
-let sqliteConn: SqliteConnection;
+let compsDb: ComponentsDb | undefined;
 
 const createWindow = () => {
 
   mainWindow = new BrowserWindow({width: 800, height: 800, resizable: true});
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/../index.html`);
   mainWindow.webContents.openDevTools();
 
   mainWindow.on("closed", () => {
@@ -18,7 +21,8 @@ const createWindow = () => {
 };
 
 const initDb = () => {
-  sqliteConn = new SqliteConnection("model.db");
+  const sqliteConnection: SqliteConnection = new SqliteConnection("model.db");
+  compsDb = new ComponentsDb(sqliteConnection);
 
 };
 
@@ -29,18 +33,25 @@ app.on("ready", () => {
   initDb();
 });
 
-ipcMain.on("refresh-request", async () => {
-  console.log("Received refresh-request");
+ipcMain.on("refresh-request", async (sender: any, queryOptions: IQueryOptions) => {
+  console.log("Received refresh-request!");
+  console.log(queryOptions);
   if (!mainWindow) {
-    throw new Error("No main window");
+    throw new Error("mainWindow is not defined");
   }
-  if (!sqliteConn) {
-    throw new Error("No db connection");
+  if (!compsDb) {
+    throw new Error("compsDb is not defined");
   }
-  const result = await sqliteConn.Query("Select * from components");
-  console.log(result);
+  console.log("Read data from compsDb");
+  let data: IComponent[] | Error = new Error ("nothing happening");
+  const result = await compsDb.GetComponents(queryOptions);
   if (result instanceof Error) {
-    console.log("Error retrieving data");
+    data = result;
+  } else {
+    data = result;
   }
-  mainWindow.webContents.send("data-updated", result);
+
+  console.log("Sending data-updated!!");
+  console.log(data);
+  mainWindow.webContents.send("data-updated", data);
 });
