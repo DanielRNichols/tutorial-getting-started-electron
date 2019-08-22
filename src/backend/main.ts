@@ -47,6 +47,7 @@ app.on("ready", () => {
   console.log(app.getAppPath());
   createWindow();
   initDb();
+
 });
 
 ipcMain.on("refresh-request", async (sender: any, queryOptions: IQueryOptions) => {
