@@ -6,7 +6,7 @@ export interface IQueryOptions {
 
 export class QueryOptions {
 
-  public static GetOptions(queryStringParams: any) {
+  public static getOptions(queryStringParams: any) {
     const filter = queryStringParams.filter ? queryStringParams.filter : undefined;
     const orderBy = queryStringParams.orderby ? queryStringParams.orderby : undefined;
     let limit: number = 0;

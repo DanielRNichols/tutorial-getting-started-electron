@@ -9,9 +9,25 @@ let compsDb: ComponentsDb | undefined;
 
 const createWindow = () => {
 
-  mainWindow = new BrowserWindow({width: 800, height: 800, resizable: true});
-  mainWindow.loadURL(`file://${__dirname}/../index.html`);
+  mainWindow = new BrowserWindow(
+    { width: 800,
+      height: 800,
+      resizable: true,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+      show: false,
+    });
+
+  const htmlFile = `file://${__dirname}/../index.html`;
+  mainWindow.loadURL(htmlFile);
   mainWindow.webContents.openDevTools();
+
+  mainWindow.once("ready-to-show", () => {
+    if (mainWindow) {
+      mainWindow.show();
+    }
+  });
 
   mainWindow.on("closed", () => {
     console.log("Closing window");
@@ -44,7 +60,7 @@ ipcMain.on("refresh-request", async (sender: any, queryOptions: IQueryOptions) =
   }
   console.log("Read data from compsDb");
   let data: IComponent[] | Error = new Error ("nothing happening");
-  const result = await compsDb.GetComponents(queryOptions);
+  const result = await compsDb.getComponents(queryOptions);
   if (result instanceof Error) {
     data = result;
   } else {
@@ -52,6 +68,6 @@ ipcMain.on("refresh-request", async (sender: any, queryOptions: IQueryOptions) =
   }
 
   console.log("Sending data-updated!!");
-  console.log(data);
+  console.log(`Number of components found: ${ data instanceof Error ? 0 : data.length}`);
   mainWindow.webContents.send("data-updated", data);
 });

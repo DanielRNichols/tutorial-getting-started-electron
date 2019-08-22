@@ -1,5 +1,5 @@
 import * as React from "react";
-import {IpcRenderer} from "electron";
+import {ipcRenderer, Event} from "electron";
 // import { RefreshButton } from "./components/RefreshButton";
 import {IComponent} from "../common/models/Component";
 import {IFilter} from "../common/models/IFilter";
@@ -30,7 +30,6 @@ declare global {
 export class App extends React.Component <IProps, IState> {
 
   public state: IState;
-  private _ipc: IpcRenderer | undefined;
   private _selectedComponentId: string = "";
   private _filters = [
     {key: "all", title: "All Components", queryString: ""},
@@ -46,19 +45,6 @@ export class App extends React.Component <IProps, IState> {
     this.state = { components: [], isLoading: true, error: undefined,
       selectedComponent: undefined, filter: this._filters[0] };
 
-    this._initializeIpc();
-  }
-
-  private _initializeIpc() {
-    if (window.require) {
-      try {
-        this._ipc = window.require("electron").ipcRenderer;
-      } catch (err) {
-        throw err;
-      }
-    } else {
-      console.log(`Electron's IPC was not loaded`);
-    }
   }
 
   private _findComponentById = (components: IComponent[], compId: string): IComponent | undefined => {
@@ -76,24 +62,24 @@ export class App extends React.Component <IProps, IState> {
   public clearFilter = async () => {
     const filter = this.getFilter("all");
     this.setState({filter});
-    this.RequestData(filter);
+    this.requestData(filter);
   }
 
   public filterOnValves = async () => {
     const filter = this.getFilter("valves");
     this.setState({filter});
-    this.RequestData(filter);
+    this.requestData(filter);
   }
 
   public filterOnEquipment = async () => {
     const filter = this.getFilter("equipment");
     this.setState({filter});
-    this.RequestData(filter);
+    this.requestData(filter);
   }
 
   public onFilterChanged = async (filter: IFilter) => {
     this.setState({filter});
-    this.RequestData(filter);
+    this.requestData(filter);
   }
 
   public onComponentViewComponentClick = (comp: IComponent) => {
@@ -125,34 +111,33 @@ export class App extends React.Component <IProps, IState> {
    );
   }
 
-  private RequestData(filter: IFilter) {
-      if (this._ipc) {
-        const queryOptions: IQueryOptions = {
-          filter: filter.queryString,
-          orderBy: undefined,
-          limit: 0,
-        };
-        this._ipc.send("refresh-request", queryOptions);
-      }
+  private requestData(filter: IFilter) {
+
+    const queryOptions: IQueryOptions = {
+      filter: filter.queryString,
+      orderBy: undefined,
+      limit: 0,
+    };
+    ipcRenderer.send("refresh-request", queryOptions);
   }
 
   public async componentDidMount() {
     console.log("In componentDidMount");
 
     // initial fetch of data
-    this.RequestData(this.state.filter);
+    this.requestData(this.state.filter);
 
-    if (this._ipc) {
-      this._ipc.on("data-updated", (event: any, data: IComponent[]) => {
-        console.log(data);
-        // check to see if the currently selected component is in the new list
-        const comp = this._findComponentById(data, this._selectedComponentId);
-        if (!comp) {
-          this._selectedComponentId = "";
-        }
-        this.setState({ components: data, isLoading: false, error: undefined,
-                        selectedComponent: comp} );
-        });
-    }
+    ipcRenderer.on("data-updated", (event: Event, data: IComponent[]) => {
+      console.log(data);
+      // check to see if the currently selected component is in the new list
+      const comp = this._findComponentById(data, this._selectedComponentId);
+      if (!comp) {
+        this._selectedComponentId = "";
+      }
+      this.setState({
+        components: data, isLoading: false, error: undefined,
+        selectedComponent: comp,
+      });
+    });
   }
 }

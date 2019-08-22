@@ -4,6 +4,7 @@ const path = require('path'),
 
 module.exports = {
     mode: 'development',
+    target: 'electron-renderer',
     entry: {
         app: [
             './src/frontend/Main.tsx'    
