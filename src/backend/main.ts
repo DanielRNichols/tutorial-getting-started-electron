@@ -1,24 +1,26 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 
 
-let mainWindow: BrowserWindow | null;
+let win: BrowserWindow | null;
 
 const createWindow = () => {
 
-  mainWindow = new BrowserWindow({width: 640, height: 480, resizable: true});
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  win = new BrowserWindow({width: 800, height: 600});
 
-  mainWindow.on("closed", () => {
+  // tslint:disable-next-line:no-floating-promises
+  win.loadURL(`file://${__dirname}/index.html`);
+  win.webContents.openDevTools();
+  win.on("closed", () => {
     console.log("Closing window");
-    mainWindow = null;
+    win = null;
   });
 
 };
 
 app.on("ready", () => {
   console.log("app is ready");
-  console.log(app.getAppPath());
   createWindow();
+
 });
 
 ipcMain.on("refresh-request", () => {
