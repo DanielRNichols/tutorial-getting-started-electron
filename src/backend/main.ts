@@ -9,10 +9,18 @@ let compsDb: ComponentsDb | undefined;
 
 const createWindow = () => {
 
-  mainWindow = new BrowserWindow({width: 800, height: 800, resizable: true});
-  mainWindow.loadURL(`file://${__dirname}/../index.html`);
+  mainWindow = new BrowserWindow(
+    { width: 800,
+      height: 800,
+      resizable: true,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    });
+  const htmlFile = `file://${__dirname}/../index.html`;
+  // tslint:disable-next-line:no-floating-promises
+  mainWindow.loadURL(htmlFile);
   mainWindow.webContents.openDevTools();
-
   mainWindow.on("closed", () => {
     console.log("Closing window");
     mainWindow = null;
@@ -31,6 +39,7 @@ app.on("ready", () => {
   console.log(app.getAppPath());
   createWindow();
   initDb();
+
 });
 
 ipcMain.on("refresh-request", async (sender: any, queryOptions: IQueryOptions) => {
@@ -44,7 +53,7 @@ ipcMain.on("refresh-request", async (sender: any, queryOptions: IQueryOptions) =
   }
   console.log("Read data from compsDb");
   let data: IComponent[] | Error = new Error ("nothing happening");
-  const result = await compsDb.GetComponents(queryOptions);
+  const result = await compsDb.getComponents(queryOptions);
   if (result instanceof Error) {
     data = result;
   } else {

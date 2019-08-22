@@ -33,11 +33,11 @@ export class ComponentsDb implements IComponentsRepository {
     this._sqliteServices = sqliteServices;
   }
 
-  public async GetComponents(queryOptions?: IQueryOptions): Promise<IComponent[] | Error> {
-    const query = this._sqliteServices.GetQueryString(this._tableName, queryOptions);
+  public async getComponents(queryOptions?: IQueryOptions): Promise<IComponent[] | Error> {
+    const query = this._sqliteServices.getQueryString(this._tableName, queryOptions);
     console.log(`query = ${query}`);
     try {
-      const result = await this._sqliteServices.Query(query);
+      const result = await this._sqliteServices.query(query);
       if (result instanceof Error) {
         return result;
       }
@@ -47,10 +47,10 @@ export class ComponentsDb implements IComponentsRepository {
     }
   }
 
-  public async GetComponentById(id: string): Promise<IComponent | Error> {
+  public async getComponentById(id: string): Promise<IComponent | Error> {
     const query = `Select * from ${this._tableName} where id=${id}`;
     try {
-      const result = await this._sqliteServices.Query(query);
+      const result = await this._sqliteServices.query(query);
       if (result instanceof Error) {
         return result;
       }
@@ -63,7 +63,7 @@ export class ComponentsDb implements IComponentsRepository {
     }
   }
 
-  public async AddComponent(comp: IComponent): Promise<string | Error> {
+  public async addComponent(comp: IComponent): Promise<string | Error> {
     const className = comp.className;
     const tag = comp.tag;
     const locked = comp.locked ? 1 : 0;
@@ -71,7 +71,7 @@ export class ComponentsDb implements IComponentsRepository {
     const query = `Insert into ${this._tableName} (className, tag, locked, properties) Values
                     ('${className}', '${tag}', ${locked}, '${properties}')`;
     try {
-      const result = await this._sqliteServices.Execute(query);
+      const result = await this._sqliteServices.execute(query);
       if (result instanceof Error) {
         return result;
       }
@@ -81,7 +81,7 @@ export class ComponentsDb implements IComponentsRepository {
     }
 }
 
-  public async UpdateComponent(comp: IComponent): Promise<IComponent | Error> {
+  public async updateComponent(comp: IComponent): Promise<IComponent | Error> {
     const className = comp.className;
     const tag = comp.tag;
     const locked = comp.locked ? 1 : 0;
@@ -93,7 +93,7 @@ export class ComponentsDb implements IComponentsRepository {
                        properties='${properties}'
                     Where id=${comp.id}`;
     try {
-      const result = await this._sqliteServices.Execute(query);
+      const result = await this._sqliteServices.execute(query);
       if (result instanceof Error) {
         return result;
       }
@@ -106,10 +106,10 @@ export class ComponentsDb implements IComponentsRepository {
     }
   }
 
-  public async DeleteComponent(id: string): Promise<boolean | Error> {
+  public async deleteComponent(id: string): Promise<boolean | Error> {
     const query = `Delete from ${this._tableName} where id=${id}`;
     try {
-      const result = await this._sqliteServices.Execute(query);
+      const result = await this._sqliteServices.execute(query);
       if (result instanceof Error) {
         return result;
       }

@@ -76,24 +76,24 @@ export class App extends React.Component <IProps, IState> {
   public clearFilter = async () => {
     const filter = this.getFilter("all");
     this.setState({filter});
-    this.RequestData(filter);
+    this.requestData(filter);
   }
 
   public filterOnValves = async () => {
     const filter = this.getFilter("valves");
     this.setState({filter});
-    this.RequestData(filter);
+    this.requestData(filter);
   }
 
   public filterOnEquipment = async () => {
     const filter = this.getFilter("equipment");
     this.setState({filter});
-    this.RequestData(filter);
+    this.requestData(filter);
   }
 
   public onFilterChanged = async (filter: IFilter) => {
     this.setState({filter});
-    this.RequestData(filter);
+    this.requestData(filter);
   }
 
   public onComponentViewComponentClick = (comp: IComponent) => {
@@ -125,7 +125,7 @@ export class App extends React.Component <IProps, IState> {
    );
   }
 
-  private RequestData(filter: IFilter) {
+  private requestData(filter: IFilter) {
       if (this._ipc) {
         const queryOptions: IQueryOptions = {
           filter: filter.queryString,
@@ -140,7 +140,7 @@ export class App extends React.Component <IProps, IState> {
     console.log("In componentDidMount");
 
     // initial fetch of data
-    this.RequestData(this.state.filter);
+    this.requestData(this.state.filter);
 
     if (this._ipc) {
       this._ipc.on("data-updated", (event: any, data: IComponent[]) => {

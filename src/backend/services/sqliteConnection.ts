@@ -11,10 +11,10 @@ export class SqliteConnection {
   private _db: sqlite3.Database | undefined = undefined;
 
   constructor(path: string) {
-    this.Connect(path);
+    this.connect(path);
   }
 
-  public Connect(path: string): boolean | Error {
+  public connect(path: string): boolean | Error {
 
     const db: sqlite3.Database = new sqlite3.Database(path);
     if (!db) {
@@ -24,7 +24,7 @@ export class SqliteConnection {
     return true;
   }
 
-  public async Query(sql: string): Promise<any[] | Error> {
+  public async query(sql: string): Promise<any[] | Error> {
     return new Promise((resolve, reject) => {
       if (this._db === undefined) {
         reject(new Error("Not connected"));
@@ -41,7 +41,7 @@ export class SqliteConnection {
     });
   }
 
-  public async Execute(sql: string, params: any = []): Promise<IExecuteResults> {
+  public async execute(sql: string, params: any = []): Promise<IExecuteResults> {
     return new Promise((resolve, reject) => {
       if (this._db === undefined) {
         reject(new Error("Not connected"));
@@ -59,7 +59,7 @@ export class SqliteConnection {
     });
   }
 
-  public GetQueryString(tableName: string, options?: IQueryOptions) {
+  public getQueryString(tableName: string, options?: IQueryOptions) {
     let whereClause = "";
     if (options) {
         whereClause = options.filter ? `Where ${options.filter}`  : whereClause;
