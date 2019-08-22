@@ -7,9 +7,13 @@ let sqliteConn: SqliteConnection;
 const createWindow = () => {
 
   mainWindow = new BrowserWindow({width: 800, height: 800, resizable: true});
+  // tslint:disable-next-line:no-floating-promises
   mainWindow.loadURL(`file://${__dirname}/index.html`);
   mainWindow.webContents.openDevTools();
 
+  // tslint:disable-next-line:no-floating-promises
+  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow.webContents.openDevTools();
   mainWindow.on("closed", () => {
     console.log("Closing window");
     mainWindow = null;
@@ -27,6 +31,7 @@ app.on("ready", () => {
   console.log(app.getAppPath());
   createWindow();
   initDb();
+
 });
 
 ipcMain.on("refresh-request", async () => {
@@ -37,7 +42,7 @@ ipcMain.on("refresh-request", async () => {
   if (!sqliteConn) {
     throw new Error("No db connection");
   }
-  const result = await sqliteConn.Query("Select * from components");
+  const result = await sqliteConn.query("Select * from components");
   console.log(result);
   if (result instanceof Error) {
     console.log("Error retrieving data");
