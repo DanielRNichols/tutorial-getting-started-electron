@@ -4,8 +4,11 @@ let win: BrowserWindow | null;
 
 const createWindow = () => {
 
-  win = new BrowserWindow({width: 640, height: 480});
+  win = new BrowserWindow({width: 800, height: 600});
+
+  // tslint:disable-next-line:no-floating-promises
   win.loadURL(`file://${__dirname}/index.html`);
+  win.webContents.openDevTools();
   win.on("closed", () => {
     console.log("Closing window");
     win = null;
