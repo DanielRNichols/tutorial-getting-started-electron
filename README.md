@@ -6,7 +6,6 @@ After cloning:
   * code .
   * open terminal
   * npm install
-  * npm run rebuild (this rebuilds sqlite for electron)
   * npm run dev
 
 
