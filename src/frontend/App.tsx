@@ -1,11 +1,12 @@
 import * as React from "react";
+import './App.css';
 import {ipcRenderer, Event} from "electron";
 // import { RefreshButton } from "./components/RefreshButton";
 import {IComponent} from "../common/models/Component";
 import {IFilter} from "../common/models/IFilter";
 import {ComponentsView} from "./components/ComponentsView";
 import {FilterButtonGroup} from "./components/FilterButtonGroup";
-import {FilterRadioGroup} from "./components/FilterRadioGroup";
+// import {FilterRadioGroup} from "./components/FilterRadioGroup";
 import {IQueryOptions} from "../backend/services/queryOptions";
 
 // tslint:disable-next-line:no-empty-interface - Just until we add some state
@@ -29,7 +30,6 @@ declare global {
 
 export class App extends React.Component <IProps, IState> {
 
-  public state: IState;
   private _selectedComponentId: string = "";
   private _filters = [
     {key: "all", title: "All Components", queryString: ""},
@@ -39,13 +39,8 @@ export class App extends React.Component <IProps, IState> {
     {key: "equipment", title: "Equipment", queryString: "className='pump' or className='tank'"},
   ];
 
-  constructor(props: IProps) {
-    super(props);
-
-    this.state = { components: [], isLoading: true, error: undefined,
-      selectedComponent: undefined, filter: this._filters[0] };
-
-  }
+  public readonly state:IState = { components: [], isLoading: true, error: undefined,
+    selectedComponent: undefined, filter: this._filters[0] };
 
   private _findComponentById = (components: IComponent[], compId: string): IComponent | undefined => {
     return components.find((comp) => comp.id === compId);
@@ -100,15 +95,15 @@ export class App extends React.Component <IProps, IState> {
       <FilterButtonGroup filters={this._filters}
                         selectedFilter={this.state.filter}
                         onClick={this.onFilterChanged} />
-      <FilterRadioGroup filters={this._filters}
+      {/* <FilterRadioGroup filters={this._filters}
                         selectedFilter={this.state.filter}
-                        onChange={this.onFilterChanged} />
+                        onChange={this.onFilterChanged} /> */}
       <ComponentsView title={this.state.filter.title}
                       components={this.state.components}
                       selectedComponent={this.state.selectedComponent}
                       onComponentClick={this.onComponentViewComponentClick} />
      </div>
-   );
+    );
   }
 
   private requestData(filter: IFilter) {

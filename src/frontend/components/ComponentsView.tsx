@@ -1,7 +1,8 @@
 import * as React from "react";
 import {IComponent} from "../../common/models/component";
-import {ComponentsList} from "./ComponentsList";
-import { ComponentDetails } from "./ComponentDetails";
+// import {ComponentsList} from "./ComponentsList";
+// import { ComponentDetails } from "./ComponentDetails";
+import { ComponentsTable } from "./ComponentsTable";
 
 interface IProps {
   title: string;
@@ -15,12 +16,13 @@ export const ComponentsView = (props: IProps) => {
 
   return (
     <div>
-      <ComponentsList title={props.title}
+      <ComponentsTable components={props.components} />
+      {/* <ComponentsList title={props.title}
                       components={props.components}
                       selectedComponent={props.selectedComponent}
                       onComponentClick={props.onComponentClick} />
-      <ComponentDetails component={props.selectedComponent} />
+      <ComponentDetails component={props.selectedComponent} /> */}
     </div>
-    );
+  );
 
 };
