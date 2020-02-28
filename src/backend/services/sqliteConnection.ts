@@ -36,7 +36,7 @@ export class SqliteConnection {
           } else {
             resolve(rows);
           }
-      });
+        });
       }
     });
   }

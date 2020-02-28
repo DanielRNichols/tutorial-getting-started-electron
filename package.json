@@ -37,8 +37,10 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
+    "@types/request": "^2.48.4",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "request": "^2.88.2",
     "sqlite3": "^4.1.1"
   }
 }
