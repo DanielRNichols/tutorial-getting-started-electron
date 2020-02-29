@@ -18,6 +18,8 @@ export const ComponentsTable = (props: IProps) => {
           <th>Id</th>
           <th>Class</th>
           <th>Tag</th>
+          <th>Description</th>
+          <th>Manufacturer</th>
           <th>Addition Properties</th>
         </tr>
       </thead>
@@ -28,6 +30,8 @@ export const ComponentsTable = (props: IProps) => {
               <td>{comp.id}</td>
               <td>{comp.className}</td>
               <td>{comp.tag}</td>
+              <td>{comp.description}</td>
+              <td>{comp.manufacturer}</td>
               <td><ComponentProperties properties={comp.properties} /></td>
             </tr>
           );

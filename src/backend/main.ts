@@ -1,13 +1,14 @@
 import {app, BrowserWindow, ipcMain} from "electron";
-import {SqliteConnection} from "./services/sqliteConnection";
-import {ComponentsDb} from "./repositories/ComponentsDb";
+// import {SqliteConnection} from "./services/sqliteConnection";
 import {IComponent} from "../common/models/Component";
 import { IQueryOptions } from "./services/queryOptions";
-import { Hub } from "./services/hubData";
+// import {ComponentsDb} from "./repositories/ComponentsDb";
+import { ComponentsHub } from "./repositories/ComponentsHub";
+import { IComponentsRepository } from "./repositories/IComponentsRepository";
 
 let mainWindow: BrowserWindow | null;
-let hub: Hub | undefined;
-let compsDb: ComponentsDb | undefined;
+let compsHub: IComponentsRepository | undefined;
+// let compsDb: IComponentsRepository | undefined;
 
 const createWindow = () => {
 
@@ -39,21 +40,21 @@ const createWindow = () => {
 };
 
 const initHub = () => {
-  hub = new Hub('http://localhost:4060/api/');
+  compsHub = new ComponentsHub('http://localhost:4060/api/');
 }
 
-const initDb = () => {
-  const sqliteConnection: SqliteConnection = new SqliteConnection("model.db");
-  compsDb = new ComponentsDb(sqliteConnection);
+// const initDb = () => {
+//   const sqliteConnection: SqliteConnection = new SqliteConnection("model.db");
+//   compsDb = new ComponentsDb(sqliteConnection);
 
-};
+// };
 
 app.on("ready", () => {
   console.log("app is ready");
   console.log(app.getAppPath());
   createWindow();
   initHub();
-  initDb();
+  // initDb();
 
 });
 
@@ -65,18 +66,20 @@ ipcMain.on("refresh-request", async (sender: any, queryOptions: IQueryOptions) =
     throw new Error("mainWindow is not defined");
   }
 
-  if(!hub) {
+  let data: IComponent[] | Error = new Error ("nothing happening");
+
+  if(!compsHub) {
     throw new Error("Hub is not defined");
   }
-  const hubData = await hub.getData('components');
-  console.log(hubData);
+  const result = await compsHub.getComponents(queryOptions);
+  console.log(result);
 
-  if (!compsDb) {
-    throw new Error("compsDb is not defined");
-  }
-  console.log("Read data from compsDb");
-  let data: IComponent[] | Error = new Error ("nothing happening");
-  const result = await compsDb.getComponents(queryOptions);
+  // if (!compsDb) {
+  //   throw new Error("compsDb is not defined");
+  // }
+  // console.log("Read data from compsDb");
+  // const result = await compsDb.getComponents(queryOptions);
+
   if (result instanceof Error) {
     data = result;
   } else {

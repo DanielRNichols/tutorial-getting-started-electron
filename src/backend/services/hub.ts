@@ -1,4 +1,5 @@
 import request from 'request';
+import { IQueryOptions } from './queryOptions';
 
 export class Hub {
   _baseUrl: string;
@@ -6,6 +7,16 @@ export class Hub {
   constructor(baseUrl: string) {
     this._baseUrl = baseUrl;
 
+  }
+
+  public getQueryString(options?: IQueryOptions) {
+    let queryString: string = "";
+    if (options) {
+      queryString = options.filter ? `filter=${options.filter}` : queryString;
+      queryString = options.orderBy ? `${queryString ? `${queryString}&` : ""}orderby ${options.orderBy}` : queryString;
+      queryString = (options.limit > 0) ? `${queryString ? `${queryString}&` : ""}limit ${options.limit}` : queryString;
+    }
+    return queryString ? `?${queryString}` : "";
   }
 
   public async getData(queryString: string): Promise<any | Error> {

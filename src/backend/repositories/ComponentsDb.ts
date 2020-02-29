@@ -8,6 +8,8 @@ const rowToComponent = (row: any): IComponent => {
     id: row.id,
     className: row.className,
     tag: row.tag,
+    description: row.description,
+    manufacturer: row.manufacturer,
     locked: row.locked != null && row.locked !== 0,
     properties: row.properties ? JSON.parse(row.properties) : [],
   };
